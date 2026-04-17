@@ -283,6 +283,15 @@ body.light select option{background:var(--bg2);color:var(--text)}
 .ci-chart-wrap{position:relative;height:320px}
 .ci-highlight{border-color:rgba(16,185,129,.3)!important;background:rgba(16,185,129,.04)!important}
 
+/* Budget limits */
+.budget-cat-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.budget-cat-row:last-child{border-bottom:none}
+.budget-cat-name{min-width:130px}
+.budget-bar-wrap{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:60px}
+.budget-bar{height:100%;border-radius:3px;transition:width .4s,background .3s}
+.budget-nums{font-family:var(--mono);font-size:.78rem;color:var(--muted);white-space:nowrap;text-align:right}
+.budget-warn{display:inline-block;padding:1px 6px;border-radius:3px;font-size:.7rem;font-weight:700;background:rgba(239,68,68,.15);color:var(--red);margin-left:6px;white-space:nowrap}
+
 /* Mobile tweaks */
 @media(max-width:480px){
   header h1{font-size:1.1rem}
@@ -357,6 +366,10 @@ body.light select option{background:var(--bg2);color:var(--text)}
         <div class="card-title">Top Incomes</div>
         <ul class="item-list" id="top-incomes-list"></ul>
       </div>
+    </div>
+    <div class="card" id="budget-limits-card" style="display:none;margin-bottom:4px">
+      <div class="card-title">Category Budget Limits</div>
+      <div id="budget-limits-list"></div>
     </div>
   </div>
 
@@ -801,6 +814,13 @@ body.light select option{background:var(--bg2);color:var(--text)}
       <div class="backup-meta" id="backup-meta"></div>
     </div>
 
+    <!-- Budget Limits -->
+    <div class="settings-section">
+      <h2>Budget Limits</h2>
+      <p class="settings-desc">Set monthly spending limits per category. A progress bar appears on the dashboard when a limit is set.</p>
+      <div id="budget-limits-settings"></div>
+    </div>
+
     <!-- Recurring transactions -->
     <div class="settings-section">
       <h2>Recurring Transactions</h2>
@@ -929,6 +949,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if(btn.dataset.tab==='dashboard') renderDashboard();
     if(btn.dataset.tab==='yearly') renderYearly();
     if(btn.dataset.tab==='investments') renderInvestments();
+    if(btn.dataset.tab==='debts') renderDebts();
     if(btn.dataset.tab==='objectives') renderObjectives();
     if(btn.dataset.tab==='entry') renderEntryView();
     if(btn.dataset.tab==='settings') renderSettings();
@@ -1008,6 +1029,8 @@ function renderDashboard() {
   const incList = document.getElementById('top-incomes-list');
   expList.innerHTML = topExp.length ? topExp.map(e=>`<li><span class="item-label">${e.label}</span><span class="item-amount">$${fmt(e.amount)}</span></li>`).join('') : '<li><span class="item-label" style="color:var(--muted)">No data</span></li>';
   incList.innerHTML = topInc.length ? topInc.map(e=>`<li><span class="item-label">${e.label}</span><span class="item-amount pos">$${fmt(e.amount)}</span></li>`).join('') : '<li><span class="item-label" style="color:var(--muted)">No data</span></li>';
+
+  renderCategoryLimits();
 }
 
 // ─── YEARLY ───────────────────────────────────────────────────────────────────
@@ -1015,6 +1038,7 @@ document.getElementById('prev-year').onclick = () => { currentYear--; renderYear
 document.getElementById('next-year').onclick = () => { currentYear++; renderYearly(); };
 
 function renderYearly() {
+  renderNetWorth();
   document.getElementById('current-year-label').textContent = currentYear;
   const monthlyData = Array.from({length:12},(_,i)=>{
     const key = `${currentYear}-${String(i+1).padStart(2,'0')}`;
@@ -1917,6 +1941,76 @@ function loadRecurring() {
   if(added===0) alert('No new recurring transactions to add (all already present or none active for this month).');
 }
 
+// ─── BUDGET LIMITS ────────────────────────────────────────────────────────────
+function getBudgetLimits() {
+  try { return JSON.parse(localStorage.getItem('budgetLimits')) || {}; }
+  catch { return {}; }
+}
+function saveBudgetLimits(obj) {
+  localStorage.setItem('budgetLimits', JSON.stringify(obj));
+  document.getElementById('last-saved').textContent = 'Saved ' + new Date().toLocaleTimeString();
+}
+
+function renderCategoryLimits() {
+  const limits = getBudgetLimits();
+  const hasLimits = CATS.some(c => limits[c] > 0);
+  const card = document.getElementById('budget-limits-card');
+  if(!hasLimits) { card.style.display = 'none'; return; }
+  card.style.display = '';
+
+  const data = getMonth(currentMonth);
+  const catTotals = {};
+  CATS.forEach(c => catTotals[c] = 0);
+  data.expenses.forEach(e => {
+    const c = e.category || 'Other';
+    catTotals[c] = (catTotals[c] || 0) + Number(e.amount || 0);
+  });
+
+  const list = document.getElementById('budget-limits-list');
+  list.innerHTML = CATS.filter(c => limits[c] > 0).map(c => {
+    const spent = catTotals[c] || 0;
+    const limit = limits[c];
+    const pct = Math.min(100, (spent / limit) * 100);
+    const barColor = pct < 70 ? 'var(--green)' : pct < 90 ? 'var(--yellow)' : 'var(--red)';
+    const exceeded = spent > limit;
+    return `<div class="budget-cat-row">
+      <div class="budget-cat-name"><span class="cat-badge ${catClass(c)}">${CAT_LABELS[c]}</span></div>
+      <div class="budget-bar-wrap"><div class="budget-bar" style="width:${pct.toFixed(1)}%;background:${barColor}"></div></div>
+      <div class="budget-nums">€${fmt(spent)} / €${fmt(limit)}${exceeded ? '<span class="budget-warn">Over!</span>' : ''}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderBudgetLimitSettings() {
+  const limits = getBudgetLimits();
+  const area = document.getElementById('budget-limits-settings');
+  area.innerHTML = `<div style="display:grid;gap:12px;margin-top:4px">
+    ${CATS.map(c => `<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="min-width:140px;font-size:.875rem">${CAT_LABELS[c]}</span>
+      <input type="number" id="bl-${c}" value="${limits[c] || ''}" placeholder="No limit"
+        min="0" step="1" style="max-width:140px;font-family:var(--mono)"
+        oninput="setBudgetLimit('${c}', this.value)">
+      <span style="font-size:.8rem;color:var(--muted)">€ / month</span>
+      ${limits[c] ? `<button class="btn btn-danger btn-sm" onclick="clearBudgetLimit('${c}')">Clear</button>` : ''}
+    </div>`).join('')}
+  </div>`;
+}
+
+function setBudgetLimit(cat, val) {
+  const limits = getBudgetLimits();
+  const v = parseFloat(val);
+  if(v > 0) limits[cat] = v;
+  else delete limits[cat];
+  saveBudgetLimits(limits);
+}
+
+function clearBudgetLimit(cat) {
+  const limits = getBudgetLimits();
+  delete limits[cat];
+  saveBudgetLimits(limits);
+  renderBudgetLimitSettings();
+}
+
 // ─── SETTINGS RENDER ──────────────────────────────────────────────────────────
 function renderSettings() {
   // Backup meta
@@ -1925,6 +2019,9 @@ function renderSettings() {
   metaEl.textContent = ts
     ? 'Last backup: ' + new Date(ts).toLocaleString()
     : 'No backup made yet.';
+
+  // Budget limits
+  renderBudgetLimitSettings();
 
   // Recurring list
   const arr = getRecurring();
