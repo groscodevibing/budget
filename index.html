@@ -283,6 +283,50 @@ body.light select option{background:var(--bg2);color:var(--text)}
 .ci-chart-wrap{position:relative;height:320px}
 .ci-highlight{border-color:rgba(16,185,129,.3)!important;background:rgba(16,185,129,.04)!important}
 
+/* ─── Conseiller Tab ─── */
+.adv-collapsible{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:20px;overflow:hidden}
+.adv-collapsible-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}
+.adv-collapsible-header h2{font-size:1rem;font-weight:600;margin:0}
+.adv-collapsible-arrow{font-size:.7rem;color:var(--muted);transition:transform .2s}
+.adv-collapsible-body{padding:0 20px 20px}
+.adv-collapsible.closed .adv-collapsible-arrow{transform:rotate(-90deg)}
+.adv-collapsible.closed .adv-collapsible-body{display:none}
+.adv-profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:600px){.adv-profile-grid{grid-template-columns:1fr}}
+.adv-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.adv-toggle-row:last-of-type{border-bottom:none}
+.adv-toggle-label{font-size:.875rem;color:var(--text)}
+.adv-report-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.adv-ts{font-size:.8rem;color:var(--muted);font-family:var(--mono)}
+.adv-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2);padding:20px;margin-bottom:16px}
+.adv-card-title{font-size:1rem;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.adv-stat-row{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;border-bottom:1px solid var(--border);font-size:.875rem}
+.adv-stat-row:last-child{border-bottom:none}
+.adv-stat-label{color:var(--muted)}
+.adv-stat-val{font-family:var(--mono);font-weight:500}
+.adv-badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.75rem;font-weight:600}
+.adv-badge-green{background:rgba(16,185,129,.15);color:#10b981}
+.adv-badge-amber{background:rgba(245,158,11,.15);color:#f59e0b}
+.adv-badge-red{background:rgba(239,68,68,.15);color:#ef4444}
+.adv-bullet{padding:7px 0;border-bottom:1px solid var(--border);font-size:.875rem;line-height:1.5}
+.adv-bullet:last-child{border-bottom:none}
+.adv-bullet.pos{color:var(--green)}
+.adv-bullet.neg{color:var(--red)}
+.adv-bullet.warn{color:var(--yellow)}
+.adv-bullet.info{color:#818cf8}
+.adv-action{padding:10px 0;border-bottom:1px solid var(--border);font-size:.875rem;line-height:1.5}
+.adv-action:last-child{border-bottom:none}
+.adv-mini-chart{margin-top:16px}
+.adv-mini-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.8rem}
+.adv-mini-bar-label{min-width:120px;color:var(--muted);text-align:right}
+.adv-mini-bar-wrap{flex:1;height:20px;background:var(--bg3);border-radius:4px;overflow:hidden;position:relative}
+.adv-mini-bar-fill{height:100%;border-radius:4px;transition:width .4s}
+.adv-mini-bar-fill.current{background:var(--accent)}
+.adv-mini-bar-fill.optimized{background:var(--green)}
+.adv-mini-bar-val{font-family:var(--mono);min-width:90px;font-size:.78rem}
+.adv-empty{text-align:center;padding:48px;color:var(--muted);font-size:.9rem;background:var(--bg2);border:1px solid var(--border);border-radius:var(--r2)}
+.adv-no-data{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.25);border-radius:var(--r2);padding:20px;text-align:center;color:var(--yellow);font-size:.9rem}
+
 /* Mobile tweaks */
 @media(max-width:480px){
   header h1{font-size:1.1rem}
@@ -313,6 +357,7 @@ body.light select option{background:var(--bg2);color:var(--text)}
     <button class="tab-btn" data-tab="entry">Data Entry</button>
     <button class="tab-btn" data-tab="import">CSV Import</button>
     <button class="tab-btn" data-tab="compound">📈</button>
+    <button class="tab-btn" data-tab="conseiller">💡</button>
     <button class="tab-btn" data-tab="settings">⚙</button>
   </div>
 
@@ -784,6 +829,70 @@ body.light select option{background:var(--bg2);color:var(--text)}
     </div>
   </div>
 
+  <!-- CONSEILLER TAB -->
+  <div class="tab-panel" id="tab-conseiller">
+
+    <!-- Profil (collapsible) -->
+    <div class="adv-collapsible" id="adv-profil-section">
+      <div class="adv-collapsible-header" onclick="advToggleProfile()">
+        <h2>👤 Profil Financier</h2>
+        <span class="adv-collapsible-arrow">▼</span>
+      </div>
+      <div class="adv-collapsible-body">
+        <div class="adv-profile-grid">
+          <div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label>Situation</label>
+              <select id="adv-situation">
+                <option value="Étudiant">Étudiant</option>
+                <option value="Salarié">Salarié</option>
+                <option value="Auto-entrepreneur">Auto-entrepreneur</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:14px">
+              <label>Revenus annuels estimés (€)</label>
+              <input type="number" id="adv-revenus" placeholder="Ex: 24000" min="0" step="100" style="font-family:var(--mono)">
+            </div>
+          </div>
+          <div>
+            <div class="adv-toggle-row">
+              <span class="adv-toggle-label">Rattachement fiscal parents</span>
+              <label class="toggle-sw"><input type="checkbox" id="adv-rattachement"><span class="toggle-track"></span></label>
+            </div>
+            <div class="adv-toggle-row">
+              <span class="adv-toggle-label">Livret A ouvert</span>
+              <label class="toggle-sw"><input type="checkbox" id="adv-livretA"><span class="toggle-track"></span></label>
+            </div>
+            <div class="adv-toggle-row">
+              <span class="adv-toggle-label">LDDS ouvert</span>
+              <label class="toggle-sw"><input type="checkbox" id="adv-ldds"><span class="toggle-track"></span></label>
+            </div>
+            <div class="adv-toggle-row">
+              <span class="adv-toggle-label">PEA ouvert</span>
+              <label class="toggle-sw"><input type="checkbox" id="adv-pea"><span class="toggle-track"></span></label>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn btn-primary" onclick="advSaveProfile()">💾 Enregistrer le profil</button>
+          <span id="adv-profile-saved" style="margin-left:12px;font-size:.8rem;color:var(--green);display:none">Profil enregistré ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rapport -->
+    <div class="adv-report-header">
+      <button class="btn btn-primary" onclick="advGenerateReport()">✨ Générer mon rapport</button>
+      <button class="btn btn-ghost" id="adv-regen-btn" onclick="advGenerateReport()" style="display:none">🔄 Régénérer</button>
+      <button class="btn btn-ghost" id="adv-copy-btn" onclick="advCopyReport()" style="display:none">📋 Copier le rapport</button>
+      <span class="adv-ts" id="adv-timestamp"></span>
+    </div>
+
+    <div id="adv-report-area"></div>
+
+  </div>
+
   <!-- SETTINGS TAB -->
   <div class="tab-panel" id="tab-settings">
 
@@ -896,6 +1005,7 @@ function getMonth(key) {
 function saveMonth(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
   document.getElementById('last-saved').textContent = 'Saved ' + new Date().toLocaleTimeString();
+  refreshYearly();
 }
 
 function monthLabel(key) {
@@ -933,6 +1043,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if(btn.dataset.tab==='entry') renderEntryView();
     if(btn.dataset.tab==='settings') renderSettings();
     if(btn.dataset.tab==='compound') renderCompound();
+    if(btn.dataset.tab==='conseiller') advInitTab();
   });
 });
 
@@ -1014,7 +1125,12 @@ function renderDashboard() {
 document.getElementById('prev-year').onclick = () => { currentYear--; renderYearly(); };
 document.getElementById('next-year').onclick = () => { currentYear++; renderYearly(); };
 
+function refreshYearly() {
+  if (document.getElementById('tab-yearly').classList.contains('active')) renderYearly();
+}
+
 function renderYearly() {
+  renderNetWorth();
   document.getElementById('current-year-label').textContent = currentYear;
   const monthlyData = Array.from({length:12},(_,i)=>{
     const key = `${currentYear}-${String(i+1).padStart(2,'0')}`;
@@ -1325,6 +1441,7 @@ function getInvestments() {
 function saveInvestments(arr) {
   localStorage.setItem('investments', JSON.stringify(arr));
   document.getElementById('last-saved').textContent = 'Saved ' + new Date().toLocaleTimeString();
+  refreshYearly();
 }
 
 function fmtDuration(dateStr) {
@@ -1977,6 +2094,7 @@ function getDebts() {
 function persistDebts(arr) {
   localStorage.setItem('debts', JSON.stringify(arr));
   document.getElementById('last-saved').textContent = 'Saved ' + new Date().toLocaleTimeString();
+  refreshYearly();
 }
 
 function debtRemaining(d) {
@@ -2161,8 +2279,8 @@ function renderNetWorth() {
   nwEl.className = 'nw-value ' + (netWorth>=0?'pos':'neg');
 
   document.getElementById('nw-sub').textContent =
-    `Portfolio ${netWorth>=0?'+':'-'}€${fmt(Math.abs(portfolio))}  ·  `+
-    `Savings ${totalSavings>=0?'+':'-'}€${fmt(Math.abs(totalSavings))}  ·  `+
+    `Portfolio €${fmt(portfolio)}  ·  `+
+    `Savings ${totalSavings>=0?'':'-'}€${fmt(Math.abs(totalSavings))}  ·  `+
     `Debts -€${fmt(remainingDebt)}`;
 
   document.getElementById('nw-portfolio').textContent = '€'+fmt(portfolio);
@@ -2179,6 +2297,25 @@ function renderNetWorth() {
   }
   keys.sort();
 
+  destroyChart('nw-line');
+  const chartWrap = document.getElementById('chart-nw-line').parentElement;
+
+  if (keys.length === 0) {
+    document.getElementById('chart-nw-line').style.display = 'none';
+    if (!chartWrap.querySelector('.nw-empty')) {
+      const msg = document.createElement('div');
+      msg.className = 'nw-empty empty';
+      msg.textContent = 'Ajoutez des données pour voir l\'évolution';
+      chartWrap.appendChild(msg);
+    }
+    return;
+  }
+
+  // Remove placeholder if present
+  const existing = chartWrap.querySelector('.nw-empty');
+  if (existing) existing.remove();
+  document.getElementById('chart-nw-line').style.display = '';
+
   // Build cumulative savings at each month
   let cumSav = 0;
   const points = keys.map(k=>{
@@ -2186,12 +2323,12 @@ function renderNetWorth() {
     const inc = d.incomes.reduce((s,r)=>s+Number(r.amount||0),0);
     const exp = d.expenses.reduce((s,r)=>s+Number(r.amount||0),0);
     cumSav += inc - exp;
-    const nw = portfolio + cumSav - remainingDebt;
-    return {label: monthLabel(k), value: nw};
+    return {label: monthLabel(k), value: portfolio + cumSav - remainingDebt};
   });
 
-  destroyChart('nw-line');
   const ctx = document.getElementById('chart-nw-line').getContext('2d');
+  // Single point: bump pointRadius so it's clearly visible
+  const isSingle = points.length === 1;
   charts['nw-line'] = new Chart(ctx, {
     type: 'line',
     data: {
@@ -2202,7 +2339,9 @@ function renderNetWorth() {
         borderColor: '#6366f1',
         backgroundColor: 'rgba(99,102,241,.1)',
         pointBackgroundColor: points.map(p=>p.value>=0?'#10b981':'#ef4444'),
-        pointRadius: 4, tension: 0.3, fill: true
+        pointRadius: isSingle ? 8 : 4,
+        pointHoverRadius: isSingle ? 10 : 6,
+        tension: 0.3, fill: true
       }]
     },
     options: {
@@ -2327,6 +2466,313 @@ function renderCompound() {
     document.getElementById(id).addEventListener('input', renderCompound);
   });
 })();
+
+// ─── CONSEILLER FINANCIER ────────────────────────────────────────────────────
+
+function fmtEur(n) {
+  if (n === null || n === undefined || isNaN(n)) return '—';
+  const abs = Math.abs(n);
+  const formatted = new Intl.NumberFormat('fr-FR', {minimumFractionDigits: 2, maximumFractionDigits: 2}).format(abs);
+  return (n < 0 ? '-' : '') + formatted + '\u00a0€';
+}
+
+function advGetProfile() {
+  try { return JSON.parse(localStorage.getItem('budget_profile')) || {}; }
+  catch { return {}; }
+}
+
+function advSaveProfile() {
+  const profile = {
+    situation: document.getElementById('adv-situation').value,
+    revenus: parseFloat(document.getElementById('adv-revenus').value) || 0,
+    rattachement: document.getElementById('adv-rattachement').checked,
+    livretA: document.getElementById('adv-livretA').checked,
+    ldds: document.getElementById('adv-ldds').checked,
+    pea: document.getElementById('adv-pea').checked
+  };
+  localStorage.setItem('budget_profile', JSON.stringify(profile));
+  const saved = document.getElementById('adv-profile-saved');
+  saved.style.display = 'inline';
+  setTimeout(() => { saved.style.display = 'none'; }, 2000);
+}
+
+function advLoadProfile() {
+  const p = advGetProfile();
+  if (p.situation) document.getElementById('adv-situation').value = p.situation;
+  if (p.revenus) document.getElementById('adv-revenus').value = p.revenus;
+  document.getElementById('adv-rattachement').checked = !!p.rattachement;
+  document.getElementById('adv-livretA').checked = !!p.livretA;
+  document.getElementById('adv-ldds').checked = !!p.ldds;
+  document.getElementById('adv-pea').checked = !!p.pea;
+}
+
+function advToggleProfile() {
+  const sec = document.getElementById('adv-profil-section');
+  sec.classList.toggle('closed');
+}
+
+function advCollectData() {
+  const allKeys = Object.keys(localStorage).filter(k => /^\d{4}-\d{2}$/.test(k)).sort();
+  const monthlyData = allKeys.map(k => {
+    const d = getMonth(k);
+    const income = d.incomes.reduce((s, r) => s + Number(r.amount || 0), 0);
+    const expenses = d.expenses.reduce((s, r) => s + Number(r.amount || 0), 0);
+    const byCategory = {};
+    CATS.forEach(c => byCategory[c] = 0);
+    d.expenses.forEach(e => { const c = e.category || 'Other'; byCategory[c] = (byCategory[c] || 0) + Number(e.amount || 0); });
+    return { key: k, income, expenses, savings: income - expenses, byCategory };
+  }).filter(m => m.income > 0 || m.expenses > 0);
+
+  if (monthlyData.length === 0) return null;
+
+  const n = monthlyData.length;
+  const avgMonthlyIncome = monthlyData.reduce((s, m) => s + m.income, 0) / n;
+  const avgMonthlyExpenses = monthlyData.reduce((s, m) => s + m.expenses, 0) / n;
+  const avgMonthlySavings = monthlyData.reduce((s, m) => s + m.savings, 0) / n;
+  const totalSavedAllTime = monthlyData.reduce((s, m) => s + m.savings, 0);
+  const savingsRate = avgMonthlyIncome > 0 ? avgMonthlySavings / avgMonthlyIncome : 0;
+
+  const avgByCategory = {};
+  CATS.forEach(c => { avgByCategory[c] = monthlyData.reduce((s, m) => s + (m.byCategory[c] || 0), 0) / n; });
+
+  const worstCategory = CATS.reduce((a, b) => (avgByCategory[a] || 0) >= (avgByCategory[b] || 0) ? a : b);
+  const bestMonth = monthlyData.reduce((a, b) => a.savings >= b.savings ? a : b);
+  const worstMonth = monthlyData.reduce((a, b) => a.savings <= b.savings ? a : b);
+
+  const investments = getInvestments();
+  const totalInvested = investments.reduce((s, i) => s + Number(i.invested || 0), 0);
+  const totalCurrentValue = investments.reduce((s, i) => s + Number(i.value || i.invested || 0), 0);
+  const totalGainLoss = totalCurrentValue - totalInvested;
+  const totalGainLossPct = totalInvested > 0 ? totalGainLoss / totalInvested * 100 : 0;
+  const hasPEA = investments.some(i => (i.account || '').toLowerCase().includes('pea'));
+  const accounts = [...new Set(investments.map(i => i.account).filter(Boolean))];
+
+  const debts = getDebts();
+  const totalDebt = debts.reduce((s, d) => s + debtRemaining(d), 0);
+  const highestInterestDebt = debts.length > 0 ? debts.reduce((a, b) => Number(a.rate || 0) >= Number(b.rate || 0) ? a : b) : null;
+  const totalMonthlyDebtPayments = debts.reduce((s, d) => s + Number(d.payment || 0), 0);
+
+  const profile = advGetProfile();
+
+  return {
+    monthlyData, n, avgMonthlyIncome, avgMonthlyExpenses, avgMonthlySavings,
+    totalSavedAllTime, savingsRate, avgByCategory, worstCategory, bestMonth, worstMonth,
+    investments, totalInvested, totalCurrentValue, totalGainLoss, totalGainLossPct, hasPEA, accounts,
+    debts, totalDebt, highestInterestDebt, totalMonthlyDebtPayments,
+    profile
+  };
+}
+
+function advGenerateReport() {
+  const data = advCollectData();
+  const area = document.getElementById('adv-report-area');
+
+  if (!data) {
+    area.innerHTML = `<div class="adv-no-data">📂 Ajoutez au moins un mois de données pour générer votre rapport.</div>`;
+    return;
+  }
+
+  const { avgMonthlyIncome, avgMonthlyExpenses, avgMonthlySavings, totalSavedAllTime,
+          savingsRate, avgByCategory, worstCategory, bestMonth, worstMonth,
+          totalInvested, totalCurrentValue, totalGainLoss, totalGainLossPct, hasPEA,
+          debts, totalDebt, highestInterestDebt, totalMonthlyDebtPayments, profile } = data;
+
+  const p = profile;
+  const sit = p.situation || 'Autre';
+  const livretA = !!p.livretA;
+  const ldds = !!p.ldds;
+  const pea = !!p.pea;
+  const rattachement = !!p.rattachement;
+  const profileRevenus = Number(p.revenus) || 0;
+
+  // Section 1 — Résumé
+  const netWorth = totalCurrentValue - totalDebt;
+  let srBadge = '';
+  const srPct = (savingsRate * 100).toFixed(1);
+  if (savingsRate >= 0.20) srBadge = `<span class="adv-badge adv-badge-green">Excellent</span>`;
+  else if (savingsRate >= 0.10) srBadge = `<span class="adv-badge adv-badge-amber">Correct</span>`;
+  else srBadge = `<span class="adv-badge adv-badge-red">Insuffisant</span>`;
+
+  const s1 = `<div class="adv-card">
+    <div class="adv-card-title">📊 Résumé Financier</div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Revenus moyens</span><span class="adv-stat-val">${fmtEur(avgMonthlyIncome)}/mois</span></div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Dépenses moyennes</span><span class="adv-stat-val">${fmtEur(avgMonthlyExpenses)}/mois</span></div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Épargne moyenne</span><span class="adv-stat-val">${fmtEur(avgMonthlySavings)}/mois (${srPct}%) ${srBadge}</span></div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Patrimoine net</span><span class="adv-stat-val">${fmtEur(netWorth)} <small style="color:var(--muted);font-size:.75rem">(investissements ${fmtEur(totalCurrentValue)} − dettes ${fmtEur(totalDebt)})</small></span></div>
+  </div>`;
+
+  // Section 2 — Points Forts
+  const strengths = [];
+  if (savingsRate >= 0.20) strengths.push(`<div class="adv-bullet pos">✓ Excellent taux d'épargne de ${srPct}% — vous épargnez ${fmtEur(avgMonthlySavings)}/mois en moyenne</div>`);
+  if (totalSavedAllTime > 0) strengths.push(`<div class="adv-bullet pos">✓ Vous avez accumulé ${fmtEur(totalSavedAllTime)} d'épargne totale</div>`);
+  if (totalCurrentValue > totalInvested && totalInvested > 0) strengths.push(`<div class="adv-bullet pos">✓ Vos investissements sont en gain : +${fmtEur(totalGainLoss)} (+${totalGainLossPct.toFixed(1)}%) sur ${fmtEur(totalInvested)} investis</div>`);
+  if (hasPEA || pea) strengths.push(`<div class="adv-bullet pos">✓ Vous avez un PEA — excellent choix fiscal pour les actions européennes</div>`);
+  if (totalDebt === 0) strengths.push(`<div class="adv-bullet pos">✓ Aucune dette — situation financière saine</div>`);
+  if ((avgByCategory['Subscriptions'] || 0) < 30) strengths.push(`<div class="adv-bullet pos">✓ Abonnements maîtrisés : ${fmtEur(avgByCategory['Subscriptions'] || 0)}/mois</div>`);
+  if (savingsRate > 0 && totalDebt > 0) strengths.push(`<div class="adv-bullet pos">✓ Vous épargnez tout en remboursant vos dettes</div>`);
+
+  const s2 = `<div class="adv-card">
+    <div class="adv-card-title">💡 Points Forts</div>
+    ${strengths.length > 0 ? strengths.join('') : '<div class="adv-bullet" style="color:var(--muted)">Ajoutez plus de données pour voir vos points forts.</div>'}
+  </div>`;
+
+  // Section 3 — Points d'Amélioration
+  const issues = [];
+  if (savingsRate < 0) issues.push(`<div class="adv-bullet neg">✗ Vous dépensez plus que vous ne gagnez : déficit moyen de ${fmtEur(Math.abs(avgMonthlySavings))}/mois</div>`);
+  else if (savingsRate < 0.10) issues.push(`<div class="adv-bullet neg">✗ Taux d'épargne trop faible : ${srPct}% — objectif minimum : 10% de vos revenus (${fmtEur(avgMonthlyIncome * 0.10)}/mois)</div>`);
+  if ((avgByCategory['Food'] || 0) > avgMonthlyIncome * 0.20) issues.push(`<div class="adv-bullet neg">✗ Alimentation élevée : ${fmtEur(avgByCategory['Food'])}/mois soit ${((avgByCategory['Food'] / avgMonthlyIncome) * 100).toFixed(0)}% de vos revenus (recommandé : &lt;20%)</div>`);
+  if ((avgByCategory['Transport'] || 0) > avgMonthlyIncome * 0.15) issues.push(`<div class="adv-bullet neg">✗ Transport élevé : ${fmtEur(avgByCategory['Transport'])}/mois soit ${((avgByCategory['Transport'] / avgMonthlyIncome) * 100).toFixed(0)}% de vos revenus (recommandé : &lt;15%)</div>`);
+  if ((avgByCategory['Subscriptions'] || 0) > 50) issues.push(`<div class="adv-bullet neg">✗ Abonnements élevés : ${fmtEur(avgByCategory['Subscriptions'])}/mois — passez-les en revue et supprimez l'inutile</div>`);
+  if (highestInterestDebt && Number(highestInterestDebt.rate || 0) > 5) issues.push(`<div class="adv-bullet neg">✗ Dette coûteuse détectée : ${esc(highestInterestDebt.label || 'Dette')} à ${highestInterestDebt.rate}% — priorité de remboursement</div>`);
+  if (avgMonthlyIncome > 0 && totalMonthlyDebtPayments > avgMonthlyIncome * 0.33) issues.push(`<div class="adv-bullet neg">✗ Taux d'endettement élevé : ${((totalMonthlyDebtPayments / avgMonthlyIncome) * 100).toFixed(0)}% de vos revenus — maximum recommandé : 33%</div>`);
+  if (totalInvested === 0) issues.push(`<div class="adv-bullet neg">✗ Aucun investissement — commencez avec ${fmtEur(avgMonthlyIncome * 0.10)}/mois (10% de vos revenus)</div>`);
+  else if (totalCurrentValue < totalInvested) issues.push(`<div class="adv-bullet neg">✗ Investissements en perte : ${fmtEur(totalGainLoss)} (${totalGainLossPct.toFixed(1)}%)</div>`);
+
+  const s3 = `<div class="adv-card">
+    <div class="adv-card-title">⚠️ Points d'Amélioration</div>
+    ${issues.length > 0 ? issues.join('') : '<div class="adv-bullet pos">✓ Aucun point d\'amélioration majeur détecté — continuez ainsi !</div>'}
+  </div>`;
+
+  // Section 4 — Optimisation Fiscale
+  const fiscal = [];
+  if (sit === 'Étudiant') {
+    fiscal.push(`<div class="adv-bullet info">📌 Bourses d'études : totalement exonérées d'impôts — ne les déclarez pas</div>`);
+    fiscal.push(`<div class="adv-bullet info">📌 Seuil étudiant : si vos revenus d'activité restent sous 5 047 €/an, vous n'êtes pas imposable</div>`);
+    if (!rattachement) fiscal.push(`<div class="adv-bullet info">📌 Rattachement fiscal : restez rattaché au foyer de vos parents si leurs impôts &gt; votre économie potentielle — à vérifier selon leur tranche</div>`);
+    else fiscal.push(`<div class="adv-bullet info">📌 Rattachement fiscal actif — vos parents bénéficient d'une demi-part supplémentaire</div>`);
+  }
+  if (sit === 'Salarié' || profileRevenus > 15000) {
+    fiscal.push(`<div class="adv-bullet info">📌 Frais réels : si vos frais professionnels (transport, repas, formation) dépassent 10% de votre salaire, optez pour les frais réels plutôt que la déduction forfaitaire</div>`);
+    if ((avgByCategory['Transport'] || 0) > 200) fiscal.push(`<div class="adv-bullet info">📌 Frais kilométriques : avec ${fmtEur(avgByCategory['Transport'])}/mois de transport, les frais réels pourraient vous faire économiser sur vos impôts</div>`);
+    fiscal.push(`<div class="adv-bullet info">📌 PER (Plan Épargne Retraite) : les versements sont déductibles de votre revenu imposable — économie selon votre tranche marginale</div>`);
+  }
+  if (!livretA) fiscal.push(`<div class="adv-bullet warn">📌 Livret A : ouvrez-en un immédiatement. Plafond 22 950 €, taux 3%, 100% exonéré d'impôts et prélèvements sociaux</div>`);
+  else if (totalSavedAllTime < 22950) fiscal.push(`<div class="adv-bullet info">📌 Livret A ouvert ✓ — plafond restant : ${fmtEur(22950 - Math.min(totalSavedAllTime, 22950))} à utiliser en priorité</div>`);
+  if (!ldds) fiscal.push(`<div class="adv-bullet warn">📌 LDDS : complément du Livret A. Plafond 12 000 €, même taux 3%, même avantage fiscal</div>`);
+  if (!pea && totalInvested > 0) fiscal.push(`<div class="adv-bullet warn">📌 PEA recommandé : vos investissements en dehors d'un PEA sont fiscalisés. Le PEA exonère les gains d'impôts après 5 ans (plafond 150 000 €)</div>`);
+  if (pea) fiscal.push(`<div class="adv-bullet info">📌 PEA ouvert ✓ — les gains sont exonérés d'impôts après 5 ans de détention. Plafond : 150 000 €</div>`);
+  fiscal.push(`<div class="adv-bullet info">📌 Assurance-vie : après 8 ans, abattement annuel de 4 600 € sur les gains (9 200 € pour un couple)</div>`);
+
+  const s4 = `<div class="adv-card">
+    <div class="adv-card-title">🏦 Optimisation Fiscale</div>
+    ${fiscal.join('')}
+  </div>`;
+
+  // Section 5 — Plan d'Action
+  const actions = [];
+  if (savingsRate < 0) actions.push(`<div class="adv-action">🔴 <strong>URGENT :</strong> Réduire les dépenses de ${fmtEur(Math.abs(avgMonthlySavings))}/mois pour arrêter le déficit — commencer par ${CAT_LABELS[worstCategory] || worstCategory} : ${fmtEur(avgByCategory[worstCategory])}/mois</div>`);
+  if (!livretA) actions.push(`<div class="adv-action">🔴 Ouvrir un Livret A cette semaine (Banque Postale, Crédit Mutuel, etc.) et y virer ${fmtEur(Math.max(avgMonthlySavings, 0))} (votre épargne du mois)</div>`);
+  if (totalDebt > 0 && highestInterestDebt && Number(highestInterestDebt.rate || 0) > 3) actions.push(`<div class="adv-action">🟡 Rembourser en priorité : ${esc(highestInterestDebt.label || 'la dette')} à ${highestInterestDebt.rate}% — augmenter la mensualité si possible</div>`);
+  if (totalInvested === 0 && savingsRate > 0.10) actions.push(`<div class="adv-action">🟡 Commencer à investir : ${fmtEur(avgMonthlyIncome * 0.10)}/mois (10% de vos revenus) sur un PEA en ETF monde (ex : Amundi MSCI World)</div>`);
+  if (!pea && totalInvested > 0) actions.push(`<div class="adv-action">🟡 Ouvrir un PEA pour y transférer vos investissements actuels et bénéficier de l'avantage fiscal</div>`);
+  if ((avgByCategory['Subscriptions'] || 0) > 50) actions.push(`<div class="adv-action">🟢 Auditer vos ${fmtEur(avgByCategory['Subscriptions'])}/mois d'abonnements — objectif : réduire de 20% soit ${fmtEur(avgByCategory['Subscriptions'] * 0.20)}/mois d'économie</div>`);
+  actions.push(`<div class="adv-action">🟢 Objectif épargne : viser ${fmtEur(avgMonthlyIncome * 0.20)}/mois (20% de vos revenus moyens de ${fmtEur(avgMonthlyIncome)}/mois)</div>`);
+
+  const s5 = `<div class="adv-card">
+    <div class="adv-card-title">🎯 Plan d'Action (30 jours)</div>
+    ${actions.join('')}
+  </div>`;
+
+  // Section 6 — Projection 5 ans
+  const currentTraj1y = avgMonthlySavings * 12;
+  const currentTraj5y = avgMonthlySavings * 60;
+  const optimizedSavings = avgMonthlyIncome * 0.20;
+  const optimizedTraj1y = optimizedSavings * 12;
+  const optimizedTraj5y = optimizedSavings * 60;
+
+  const monthly = Math.max(avgMonthlySavings * 0.5, 50);
+  const r = 0.07 / 12;
+  const n60 = 60;
+  const value5y = totalCurrentValue * Math.pow(1.07, 5) + monthly * ((Math.pow(1.07, 5) - 1) / r);
+  const gains5y = value5y - totalInvested;
+  const taxSaved = (pea || (!pea && totalInvested > 0)) ? gains5y * 0.30 : 0;
+
+  const maxBar = Math.max(optimizedTraj5y, currentTraj5y, 1);
+  function barWidth(v) { return Math.max(0, Math.min(100, v / maxBar * 100)).toFixed(1); }
+
+  let projInvHtml = '';
+  if (totalInvested > 0 || savingsRate > 0) {
+    projInvHtml = `
+    <div class="adv-stat-row"><span class="adv-stat-label">Portefeuille estimé dans 5 ans</span><span class="adv-stat-val">${fmtEur(value5y)} <small style="color:var(--muted)">(dont ${fmtEur(Math.max(0,gains5y))} de gains sur ${fmtEur(totalInvested)} investis)</small></span></div>`;
+  }
+  if (taxSaved > 0) {
+    projInvHtml += `<div class="adv-stat-row"><span class="adv-stat-label">Économie fiscale PEA après 5 ans</span><span class="adv-stat-val pos">~${fmtEur(taxSaved)} <small style="color:var(--muted)">(flat tax 30% évitée sur gains estimés)</small></span></div>`;
+  }
+
+  const s6 = `<div class="adv-card">
+    <div class="adv-card-title">📈 Projection sur 5 ans</div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Trajectoire actuelle — 1 an</span><span class="adv-stat-val">${fmtEur(currentTraj1y)}</span></div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Trajectoire actuelle — 5 ans</span><span class="adv-stat-val">${fmtEur(currentTraj5y)}</span></div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Trajectoire optimisée — 1 an</span><span class="adv-stat-val pos">${fmtEur(optimizedTraj1y)}</span></div>
+    <div class="adv-stat-row"><span class="adv-stat-label">Trajectoire optimisée — 5 ans</span><span class="adv-stat-val pos">${fmtEur(optimizedTraj5y)}</span></div>
+    ${projInvHtml}
+    <div class="adv-mini-chart">
+      <div style="font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:10px">Comparaison épargne cumulée</div>
+      <div class="adv-mini-bar-row">
+        <span class="adv-mini-bar-label">Actuelle 1 an</span>
+        <div class="adv-mini-bar-wrap"><div class="adv-mini-bar-fill current" style="width:${barWidth(currentTraj1y)}%"></div></div>
+        <span class="adv-mini-bar-val">${fmtEur(currentTraj1y)}</span>
+      </div>
+      <div class="adv-mini-bar-row">
+        <span class="adv-mini-bar-label">Optimisée 1 an</span>
+        <div class="adv-mini-bar-wrap"><div class="adv-mini-bar-fill optimized" style="width:${barWidth(optimizedTraj1y)}%"></div></div>
+        <span class="adv-mini-bar-val">${fmtEur(optimizedTraj1y)}</span>
+      </div>
+      <div class="adv-mini-bar-row">
+        <span class="adv-mini-bar-label">Actuelle 5 ans</span>
+        <div class="adv-mini-bar-wrap"><div class="adv-mini-bar-fill current" style="width:${barWidth(currentTraj5y)}%"></div></div>
+        <span class="adv-mini-bar-val">${fmtEur(currentTraj5y)}</span>
+      </div>
+      <div class="adv-mini-bar-row">
+        <span class="adv-mini-bar-label">Optimisée 5 ans</span>
+        <div class="adv-mini-bar-wrap"><div class="adv-mini-bar-fill optimized" style="width:${barWidth(optimizedTraj5y)}%"></div></div>
+        <span class="adv-mini-bar-val">${fmtEur(optimizedTraj5y)}</span>
+      </div>
+    </div>
+  </div>`;
+
+  area.innerHTML = s1 + s2 + s3 + s4 + s5 + s6;
+
+  const ts = new Date().toLocaleString('fr-FR');
+  document.getElementById('adv-timestamp').textContent = 'Généré le ' + ts;
+  document.getElementById('adv-regen-btn').style.display = 'inline-flex';
+  document.getElementById('adv-copy-btn').style.display = 'inline-flex';
+
+  const report = {
+    timestamp: ts,
+    html: area.innerHTML
+  };
+  localStorage.setItem('budget_last_report', JSON.stringify(report));
+}
+
+function advCopyReport() {
+  const area = document.getElementById('adv-report-area');
+  const text = area.innerText || area.textContent || '';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('adv-copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copié !';
+      setTimeout(() => { btn.textContent = orig; }, 2000);
+    });
+  }
+}
+
+function advInitTab() {
+  advLoadProfile();
+  const saved = localStorage.getItem('budget_last_report');
+  if (saved) {
+    try {
+      const r = JSON.parse(saved);
+      document.getElementById('adv-report-area').innerHTML = r.html || '';
+      document.getElementById('adv-timestamp').textContent = 'Généré le ' + r.timestamp;
+      if (r.html) {
+        document.getElementById('adv-regen-btn').style.display = 'inline-flex';
+        document.getElementById('adv-copy-btn').style.display = 'inline-flex';
+      }
+    } catch {}
+  }
+}
 
 // ─── UTILS ────────────────────────────────────────────────────────────────────
 function esc(s){
